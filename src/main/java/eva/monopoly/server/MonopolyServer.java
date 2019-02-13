@@ -1,4 +1,4 @@
-package eva.monopolyserver;
+package eva.monopoly.server;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -54,9 +54,6 @@ public class MonopolyServer {
 				clientsToPlayers.put(clientName, null);
 				break;
 			case DISCONNECTED:
-				disconnectedPlayers.put(clientName, clientsToPlayers.get(clientName));
-				clientsToPlayers.remove(clientName);
-				break;
 			case LOSTCONNECTION:
 				disconnectedPlayers.put(clientName, clientsToPlayers.get(clientName));
 				clientsToPlayers.remove(clientName);
