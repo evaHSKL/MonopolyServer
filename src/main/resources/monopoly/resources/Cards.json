@@ -1,0 +1,256 @@
+[
+	{
+		"text": "Du kommst aus dem Gefängnis frei! Behalte diese Karte, bis du sie benötigst oder verkaufst.",
+		"type": "event",
+		"action": {
+			"type": "unjail"
+		}
+	},
+	{
+		"text": "Gehe in das Gefängnis! Begeben dich direkt dorthin. Gehe nicht über Los. Ziehe nicht M 200 ein.",
+		"type": "event",
+		"action": {
+			"type": "jail"
+		}
+	},
+	{
+		"text": "Rücke vor bis auf Los. (Ziehe M 200 ein).",
+		"type": "event",
+		"action": {
+			"type": "move",
+			"target": "LOS"
+		}
+	},
+	{
+		"text": "Rücke vor bis zur Schlossallee.",
+		"type": "event",
+		"action": {
+			"type": "move",
+			"target": "Schlossallee"
+		}
+	},
+	{
+		"text": "Mache einen Ausflug zum Südbahnhof. Wenn du über Los kommst, ziehe M 200 ein.",
+		"type": "event",
+		"action": {
+			"type": "move",
+			"target": "Südbahnhof"
+		}
+	},
+	{
+		"text": "Dein Bausparvertrag wird fällig. Du erhältst M 150.",
+		"type": "event",
+		"action": {
+			"type": "money",
+			"amount": 150
+		}
+	},
+	{
+		"text": "Rücke vor bis zum Opernplatz. Wenn du über Los kommst, ziehe M 200 ein.",
+		"type": "event",
+		"action": {
+			"type": "move",
+			"target": "Opernplatz"
+		}
+	},
+	{
+		"text": "Rücke vor bis zum nächsten Werk. Wirf die Würfel und zahlen dem Eigentümer den zehnfachen Betrag deines Wurfergebnisses. Wenn das Werk noch niemandem gehört, kannst du es von der Bank kaufen.",
+		"type": "event",
+		"action": {
+			"type": "move",
+			"target": "factory"
+		}
+	},
+	{
+		"text": "Die Bank zahlt dir eine Dividende von M 50.",
+		"type": "event",
+		"action": {
+			"type": "money",
+			"amount": 50
+		}
+	},
+	{
+		"text": "Du lässt deine Häuser renovieren. Zahle: M 25 pro Haus, M 100 pro Hotel.",
+		"type": "event",
+		"action": {
+			"type": "moneybuildings",
+			"house": -25,
+			"hotel": -100
+		}
+	},
+	{
+		"text": "Rücke vor bis zur Seestrasse. Wenn du über Los kommst, ziehe M 200 ein.",
+		"type": "event",
+		"action": {
+			"type": "move",
+			"target": "Seestrasse"
+		}
+	},
+	{
+		"text": "Du bist zum Vorstand gewählt worden. Zahle jedem Spieler M 50.",
+		"type": "event",
+		"action": {
+			"type": "moneyplayer",
+			"amount": -50 
+		}
+	},
+	{
+		"text": "Gehe 3 Felder zurück.",
+		"type": "event",
+		"action": {
+			"type": "moveamount",
+			"amount": -3
+		}
+	},
+	{
+		"text": "Strafzettel! Zahle M 15.",
+		"type": "event",
+		"action": {
+			"type": "money",
+			"amount": -15
+		}
+	},
+	{
+		"text": "Rücke vor bis zum nächsten Bahnhof. Der Eigentümer erhält das Doppelte der normalen Miete. Wenn der Bahnhof noch niemandem gehört, kannst du ihn von der Bank kaufen.",
+		"type": "event",
+		"action": {
+			"type": "movemoneydouble",
+			"target": "trainstation"
+		}
+	},
+	{
+		"text": "Rücke vor bis zum nächsten Bahnhof. Der Eigentümer erhält das Doppelte der normalen Miete. Wenn der Bahnhof noch niemandem gehört, kannst du ihn von der Bank kaufen.",
+		"type": "event",
+		"action": {
+			"type": "movemoneydouble",
+			"target": "trainstation"
+		}
+	},
+	{
+		"text": "Du kommst aus dem Gefängnis frei! Behalte diese Karte, bis du sie benötigst oder verkaufst.",
+		"type": "community",
+		"action": {
+			"type": "unjail"
+		}
+	},
+	{
+		"text": "Gehe in das Gefängnis! Begib dich direkt dorthin. Gehe nicht über Los. Ziehe nicht M 200 ein.",
+		"type": "community",
+		"action": {
+			"type": "jail"
+		}
+	},
+	{
+		"text": "Rücke vor bis auf Los. (Ziehe M 200 ein).",
+		"type": "community",
+		"action": {
+			"type": "move",
+			"target": "LOS"
+		}
+	},
+	{
+		"text": "Zahle Schulgeld: M 50.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": -50
+		}
+	},
+	{
+		"text": "Du erbst M 100.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 100
+		}
+	},
+	{
+		"text": "Urlaubsgeld! Du erhältst M 100.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 100
+		}
+	},
+	{
+		"text": "Einkommensteuerrückzahlung. Du erhältst M 20.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 20
+		}
+	},
+	{
+		"text": "Zweiter Platz im Schönheitswettbewerb. Du erhältst M 10.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 10
+		}
+	},
+	{
+		"text": "Deine Lebensversicherung wird fällig. Du erhältst M 100.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 100
+		}
+	},
+	{
+		"text": "Du hast Geburtstag! Jeder Spieler schenkt dir M 10.",
+		"type": "community",
+		"action": {
+			"type": "moneyplayer",
+			"amount": 10
+		}
+	},
+	{
+		"text": "Arztkosten. Zahle M 50.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": -50
+		}
+	},
+	{
+		"text": "Aus Lagerverkäufen erhältst du M 50.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 50
+		}
+	},
+	{
+		"text": "Krankenhausgebühren. Du zahlst M 100.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": -100
+		}
+	},
+	{
+		"text": "Du erhältst eine Beratungsgebühr von M 25.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 25
+		}
+	},
+	{
+		"text": "Bankirrtum zu deinen Gunsten. Ziehe M 200 ein.",
+		"type": "community",
+		"action": {
+			"type": "money",
+			"amount": 200
+		}
+	},
+	{
+		"text": "Kosten für Strassenausbesserungen. Zahle: M 40 pro Haus, M 115 pro Hotel.",
+		"type": "community",
+		"action": {
+			"type": "moneybuildings",
+			"house": -40,
+			"hotel": -115
+		}
+	}
+]

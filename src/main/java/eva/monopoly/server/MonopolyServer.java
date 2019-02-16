@@ -7,14 +7,16 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eva.monopoly.api.game.GameBoard;
 import eva.monopoly.api.game.player.Player;
 import eva.monopoly.api.network.api.SocketConnector;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
 import eva.monopoly.api.network.server.Server;
+import eva.monopoly.server.game.GameBoard;
 
 public class MonopolyServer {
 	public final static Logger LOG = LoggerFactory.getLogger(MonopolyServer.class);
+
+	private static MonopolyServer instance;
 
 	private Server server;
 	private GameBoard gameBoard;
@@ -24,7 +26,7 @@ public class MonopolyServer {
 	public static void main(String[] args) {
 		String name = args.length > 0 ? args[0] : "Server";
 		int port = args.length > 1 ? Integer.valueOf(args[1]) : SocketConnector.STD_PORT;
-		new MonopolyServer(port, name);
+		instance = new MonopolyServer(port, name);
 	}
 
 	public MonopolyServer(int port, String name) {
@@ -66,5 +68,13 @@ public class MonopolyServer {
 			LOG.debug("Client '" + clientName + "' " + state.getState());
 			server.sendMessageToAllExcept(new PlayerStatusChanged(clientName, state.getState()), con);
 		});
+	}
+
+	public static MonopolyServer getInstance() {
+		return instance;
+	}
+
+	public GameBoard getGameBoard() {
+		return gameBoard;
 	}
 }

@@ -1,0 +1,497 @@
+{
+	"streets": [
+		{
+			"name": "Badstrasse",
+			"rent": {
+				"nohouse": 2,
+				"onehouse": 10,
+				"twohouses": 30,
+				"threehouses": 90,
+				"fourhouses": 160,
+				"hotel": 250,
+				"housecost": 50
+			},
+			"mortgagevalue": 30,
+			"group": "brown",
+			"cost": 60
+		},
+		{
+			"name": "Turmstrasse",
+			"rent": {
+				"nohouse": 4,
+				"onehouse": 20,
+				"twohouses": 60,
+				"threehouses": 180,
+				"fourhouses": 320,
+				"hotel": 450,
+				"housecost": 50
+			},
+			"mortgagevalue": 30,
+			"group": "brown",
+			"cost": 60
+		},
+		{
+			"name": "Poststrasse",
+			"rent": {
+				"nohouse": 8,
+				"onehouse": 40,
+				"twohouses": 100,
+				"threehouses": 300,
+				"fourhouses": 450,
+				"hotel": 600,
+				"housecost": 50
+			},
+			"mortgagevalue": 60,
+			"group": "lightblue",
+			"cost": 120
+		},
+		{
+			"name": "Elisenstrasse",
+			"rent": {
+				"nohouse": 6,
+				"onehouse": 30,
+				"twohouses": 90,
+				"threehouses": 270,
+				"fourhouses": 400,
+				"hotel": 550,
+				"housecost": 50
+			},
+			"mortgagevalue": 50,
+			"group": "lightblue",
+			"cost": 100
+		},
+		{
+			"name": "Chaussestrasse",
+			"rent": {
+				"nohouse": 6,
+				"onehouse": 30,
+				"twohouses": 90,
+				"threehouses": 270,
+				"fourhouses": 400,
+				"hotel": 550,
+				"housecost": 50
+			},
+			"mortgagevalue": 50,
+			"group": "lightblue",
+			"cost": 100
+		},
+		{
+			"name": "Seestrasse",
+			"rent": {
+				"nohouse": 10,
+				"onehouse": 50,
+				"twohouses": 150,
+				"threehouses": 450,
+				"fourhouses": 625,
+				"hotel": 750,
+				"housecost": 100
+			},
+			"mortgagevalue": 70,
+			"group": "pink",
+			"cost": 140
+		},
+		{
+			"name": "Hafenstrasse",
+			"rent": {
+				"nohouse": 10,
+				"onehouse": 50,
+				"twohouses": 150,
+				"threehouses": 450,
+				"fourhouses": 625,
+				"hotel": 750,
+				"housecost": 100
+			},
+			"mortgagevalue": 70,
+			"group": "pink",
+			"cost": 140
+		},
+		{
+			"name": "Neue Strasse",
+			"rent": {
+				"nohouse": 12,
+				"onehouse": 60,
+				"twohouses": 180,
+				"threehouses": 500,
+				"fourhouses": 700,
+				"hotel": 900,
+				"housecost": 100
+			},
+			"mortgagevalue": 80,
+			"group": "pink",
+			"cost": 160
+		},
+		{
+			"name": "Münchener Strasse",
+			"rent": {
+				"nohouse": 14,
+				"onehouse": 70,
+				"twohouses": 200,
+				"threehouses": 550,
+				"fourhouses": 750,
+				"hotel": 950,
+				"housecost": 100
+			},
+			"mortgagevalue": 90,
+			"group": "orange",
+			"cost": 180
+		},
+		{
+			"name": "Wiener Strasse",
+			"rent": {
+				"nohouse": 14,
+				"onehouse": 70,
+				"twohouses": 200,
+				"threehouses": 550,
+				"fourhouses": 750,
+				"hotel": 950,
+				"housecost": 100
+			},
+			"mortgagevalue": 90,
+			"group": "orange",
+			"cost": 180
+		},
+		{
+			"name": "Berliner Strasse",
+			"rent": {
+				"nohouse": 16,
+				"onehouse": 80,
+				"twohouses": 220,
+				"threehouses": 600,
+				"fourhouses": 800,
+				"hotel": 1000,
+				"housecost": 100
+			},
+			"mortgagevalue": 100,
+			"group": "orange",
+			"cost": 200
+		},
+		{
+			"name": "Theaterstrasse",
+			"rent": {
+				"nohouse": 18,
+				"onehouse": 90,
+				"twohouses": 250,
+				"threehouses": 700,
+				"fourhouses": 875,
+				"hotel": 1050,
+				"housecost": 150
+			},
+			"mortgagevalue": 110,
+			"group": "red",
+			"cost": 220
+		},
+		{
+			"name": "Museumstrasse",
+			"rent": {
+				"nohouse": 18,
+				"onehouse": 90,
+				"twohouses": 250,
+				"threehouses": 700,
+				"fourhouses": 875,
+				"hotel": 1050,
+				"housecost": 150
+			},
+			"mortgagevalue": 110,
+			"group": "red",
+			"cost": 220
+		},
+		{
+			"name": "Opernplatz",
+			"rent": {
+				"nohouse": 20,
+				"onehouse": 100,
+				"twohouses": 300,
+				"threehouses": 750,
+				"fourhouses": 925,
+				"hotel": 1100,
+				"housecost": 150
+			},
+			"mortgagevalue": 120,
+			"group": "red",
+			"cost": 240
+		},
+		{
+			"name": "Lessingstrasse",
+			"rent": {
+				"nohouse": 22,
+				"onehouse": 110,
+				"twohouses": 330,
+				"threehouses": 800,
+				"fourhouses": 975,
+				"hotel": 1150,
+				"housecost": 150
+			},
+			"mortgagevalue": 130,
+			"group": "yellow",
+			"cost": 260
+		},
+		{
+			"name": "Schillerstrasse",
+			"rent": {
+				"nohouse": 22,
+				"onehouse": 110,
+				"twohouses": 330,
+				"threehouses": 800,
+				"fourhouses": 975,
+				"hotel": 1150,
+				"housecost": 150
+			},
+			"mortgagevalue": 130,
+			"group": "yellow",
+			"cost": 260
+		},
+		{
+			"name": "Goethestrasse",
+			"rent": {
+				"nohouse": 24,
+				"onehouse": 120,
+				"twohouses": 360,
+				"threehouses": 850,
+				"fourhouses": 1025,
+				"hotel": 1200,
+				"housecost": 150
+			},
+			"mortgagevalue": 140,
+			"group": "yellow",
+			"cost": 280
+		},
+		{
+			"name": "Rathausplatz",
+			"rent": {
+				"nohouse": 26,
+				"onehouse": 130,
+				"twohouses": 390,
+				"threehouses": 900,
+				"fourhouses": 1100,
+				"hotel": 1275,
+				"housecost": 200
+			},
+			"mortgagevalue": 150,
+			"group": "green",
+			"cost": 300
+		},
+		{
+			"name": "Hauptstrasse",
+			"rent": {
+				"nohouse": 26,
+				"onehouse": 130,
+				"twohouses": 390,
+				"threehouses": 900,
+				"fourhouses": 1100,
+				"hotel": 1275,
+				"housecost": 200
+			},
+			"mortgagevalue": 150,
+			"group": "green",
+			"cost": 300
+		},
+		{
+			"name": "Bahnhofstrasse",
+			"rent": {
+				"nohouse": 28,
+				"onehouse": 150,
+				"twohouses": 450,
+				"threehouses": 1000,
+				"fourhouses": 1200,
+				"hotel": 1400,
+				"housecost": 200
+			},
+			"mortgagevalue": 160,
+			"group": "green",
+			"cost": 320
+		},
+		{
+			"name": "Parkstrasse",
+			"rent": {
+				"nohouse": 35,
+				"onehouse": 175,
+				"twohouses": 500,
+				"threehouses": 1100,
+				"fourhouses": 1300,
+				"hotel": 1500,
+				"housecost": 200
+			},
+			"mortgagevalue": 175,
+			"group": "blue",
+			"cost": 350
+		},
+		{
+			"name": "Schlossallee",
+			"rent": {
+				"nohouse": 50,
+				"onehouse": 200,
+				"twohouses": 600,
+				"threehouses": 1400,
+				"fourhouses": 1700,
+				"hotel": 2000,
+				"housecost": 200
+			},
+			"mortgagevalue": 200,
+			"group": "blue",
+			"cost": 400
+		},
+		{
+			"name": "Wasserwerk",
+			"rent": {
+				"factorsingle": 4,
+				"factorgroup": 10
+			},
+			"mortgagevalue": 75,
+			"group": "factory",
+			"cost": 150
+		},
+		{
+			"name": "Elektrizitätswerk",
+			"rent": {
+				"factorsingle": 4,
+				"factorgroup": 10
+			},
+			"mortgagevalue": 75,
+			"group": "factory",
+			"cost": 150
+		},
+		{
+			"name": "Nordbahnhof",
+			"rent": {
+				"onestation": 25,
+				"twostations": 50,
+				"threestations": 100,
+				"fourstations": 200
+			},
+			"mortgagevalue": 100,
+			"group": "trainstation",
+			"cost": 200
+		},
+		{
+			"name": "Hauptbahnhof",
+			"rent": {
+				"onestation": 25,
+				"twostations": 50,
+				"threestations": 100,
+				"fourstations": 200
+			},
+			"mortgagevalue": 100,
+			"group": "trainstation",
+			"cost": 200
+		},
+		{
+			"name": "Westbahnhof",
+			"rent": {
+				"onestation": 25,
+				"twostations": 50,
+				"threestations": 100,
+				"fourstations": 200
+			},
+			"mortgagevalue": 100,
+			"group": "trainstation",
+			"cost": 200
+		},
+		{
+			"name": "Südbahnhof",
+			"rent": {
+				"onestation": 25,
+				"twostations": 50,
+				"threestations": 100,
+				"fourstations": 200
+			},
+			"mortgagevalue": 100,
+			"group": "trainstation",
+			"cost": 200
+		}
+	],
+	"specialstreets": [
+		{
+			"name": "LOS",
+			"action": {
+				"type": "money",
+				"amount": 200
+			}
+		},
+		{
+			"name": "Gemeinschaftsfeld",
+			"action": {
+				"type": "community"
+			}
+		},
+		{
+			"name": "Ereignisfeld",
+			"action": {
+				"type": "event"
+			}
+		},
+		{
+			"name": "Einkommenssteuer",
+			"action": {
+				"type": "money",
+				"amount": -200
+			}
+		},
+		{
+			"name": "Gefängnis",
+			"action": {
+				"type": "none"
+			}
+		},
+		{
+			"name": "Frei Parken",
+			"action": {
+				"type": "none"
+			}
+		},
+		{
+			"name": "Gehen sie in das Gefängnis",
+			"action": {
+				"type": "jail"
+			}
+		},
+		{
+			"name": "Zusatzsteuer",
+			"action": {
+				"type": "money",
+				"amount": -200
+			}
+		}
+	],
+	"streetorder": {
+		"1": "specialstreets:0",
+		"2": "street:0",
+		"3": "specialstreets:1",
+		"4": "street:1",
+		"5": "specialstreets:3",
+		"6": "street:27",
+		"7": "street:4",
+		"8": "specialstreets:2",
+		"9": "street:3",
+		"10": "street:2",
+		"11": "specialstreets:4",
+		"12": "street:5",
+		"13": "street:23",
+		"14": "street:6",
+		"15": "street:7",
+		"16": "street:26",
+		"17": "street:8",
+		"18": "specialstreets:1",
+		"19": "street:9",
+		"20": "street:10",
+		"21": "specialstreets:5",
+		"22": "street:11",
+		"23": "specialstreets:2",
+		"24": "street:12",
+		"25": "street:13",
+		"26": "street:24",
+		"27": "street:14",
+		"28": "street:15",
+		"29": "street:22",
+		"30": "street:16",
+		"31": "specialstreets:6",
+		"32": "street:17",
+		"33": "street:18",
+		"34": "specialstreets:1",
+		"35": "street:19",
+		"36": "street:25",
+		"37": "specialstreets:2",
+		"38": "street:20",
+		"39": "specialstreets:7",
+		"40": "street:21"
+	}
+}
