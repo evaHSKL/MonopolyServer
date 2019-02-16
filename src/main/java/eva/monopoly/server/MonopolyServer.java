@@ -3,10 +3,12 @@ package eva.monopoly.server;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eva.monopoly.api.game.player.Player;
 import eva.monopoly.api.game.player.Player.Pawn;
 import eva.monopoly.api.network.api.SocketConnector;
 import eva.monopoly.api.network.messages.GameStateChanged;
@@ -22,6 +24,7 @@ public class MonopolyServer {
 	private static MonopolyServer instance;
 
 	private Server server;
+	private GameState gameState;
 	private GameBoard gameBoard;
 	private Map<String, Client> players;
 	private Map<String, Client> disconnectedPlayers;
@@ -33,6 +36,7 @@ public class MonopolyServer {
 	}
 
 	public MonopolyServer(int port, String name) {
+		gameState = gameState.PREGAME;
 		this.gameBoard = new GameBoard();
 		this.players = new HashMap<>();
 
@@ -50,6 +54,14 @@ public class MonopolyServer {
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
 		}
+	}
+
+	public static MonopolyServer getInstance() {
+		return instance;
+	}
+
+	public GameBoard getGameBoard() {
+		return gameBoard;
 	}
 
 	public void registerHandler() {
@@ -70,7 +82,7 @@ public class MonopolyServer {
 				break;
 			}
 			LOG.debug("Client '" + clientName + "' " + state.getState());
-			server.sendMessageToAllExcept(state, con);
+			server.sendMessageToAll(state);
 		});
 		server.registerClientHandle(PawnChanged.class, (con, pawn) -> {
 			Client client = players.get(pawn.getName());
@@ -79,7 +91,7 @@ public class MonopolyServer {
 				return;
 			}
 			players.get(pawn.getName()).setPlayerPawn(pawn.getPawn());
-			server.sendMessageToAllExcept(pawn, con);
+			server.sendMessageToAll(pawn);
 		});
 		server.registerClientHandle(GameStateChanged.class, (con, state) -> {
 			boolean ready = GameState.READY.equals(state.getGameState());
@@ -95,17 +107,24 @@ public class MonopolyServer {
 					}
 				}
 				players.get(state.getName()).setReady(ready);
-				server.sendMessageToAllExcept(state, con);
+				server.sendMessageToAll(state);
+				if (ready) {
+					for (Client c : players.values()) {
+						if (!c.isReady()) {
+							return;
+						}
+					}
+					startGame();
+				}
 			}
 		});
 	}
 
-	public static MonopolyServer getInstance() {
-		return instance;
-	}
-
-	public GameBoard getGameBoard() {
-		return gameBoard;
+	private void startGame() {
+		for (Entry<String, Client> c : players.entrySet()) {
+			gameBoard.addPlayer(new Player(c.getKey(), c.getValue().playerPawn));
+		}
+		server.sendMessageToAll(new GameStateChanged(null, GameState.INGAME));
 	}
 
 	private static class Client {
