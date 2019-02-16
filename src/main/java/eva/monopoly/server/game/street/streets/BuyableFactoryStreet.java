@@ -17,12 +17,12 @@ public class BuyableFactoryStreet extends eva.monopoly.api.game.street.streets.B
 
 	@Override
 	protected List<BuyableStreet> getAllStreets() {
-		return new ArrayList<>(MonopolyServer.getInstance().getGameBoard().getBuyableStreets().keySet());
+		return new ArrayList<>(MonopolyServer.getInstance().getGameBoard().getBuyableStreets());
 	}
 
 	@Override
 	public void action(Player p, int dice, int modifier) {
-		Player streetOwner = MonopolyServer.getInstance().getGameBoard().getBuyableStreets().get(this);
+		Player streetOwner = MonopolyServer.getInstance().getGameBoard().getStreetOwner(this);
 		int fee = chargeFee(p, dice, streetOwner, modifier);
 		if (fee != 0) {
 			GameBoard.LOG.debug(p.getName() + " has entered " + getName() + " owned by " + streetOwner.getName()

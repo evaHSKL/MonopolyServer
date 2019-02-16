@@ -1,9 +1,7 @@
 package eva.monopoly.server.game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -26,9 +24,8 @@ public class GameBoard {
 	private final List<Player> players;
 	private final List<Card> eventCards;
 	private final List<Card> communityCards;
-	private final Map<BuyableStreet, Player> buyableStreets;
+	private final List<BuyableStreet> buyableStreets;
 	private final ArrayList<Street> streets;
-	private final Map<Card, Player> cardsInHand;
 
 	public GameBoard() {
 		players = new ArrayList<>();
@@ -36,13 +33,12 @@ public class GameBoard {
 		eventCards = loadedcards.getKey();
 		communityCards = loadedcards.getValue();
 		streets = Streets.loadStreets();
-		buyableStreets = new HashMap<>();
+		buyableStreets = new ArrayList<>();
 		for (Street s : streets) {
 			if (s instanceof BuyableStreet) {
-				buyableStreets.put((BuyableStreet) s, null);
+				buyableStreets.add((BuyableStreet) s);
 			}
 		}
-		cardsInHand = new HashMap<>();
 	}
 
 	public List<Player> getPlayers() {
@@ -57,7 +53,7 @@ public class GameBoard {
 		return communityCards;
 	}
 
-	public Map<BuyableStreet, Player> getBuyableStreets() {
+	public List<BuyableStreet> getBuyableStreets() {
 		return buyableStreets;
 	}
 
@@ -65,8 +61,22 @@ public class GameBoard {
 		return streets;
 	}
 
-	public Map<Card, Player> getCardsInHand() {
-		return cardsInHand;
+	public Player getStreetOwner(BuyableStreet s) {
+		for (Player p : players) {
+			if (p.getStreets().contains(s)) {
+				return p;
+			}
+		}
+		return null;
+	}
+
+	public Player getCardOwner(Card c) {
+		for (Player p : players) {
+			if (p.getCards().contains(c)) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	public boolean addPlayer(Player p) {
@@ -90,7 +100,7 @@ public class GameBoard {
 
 	public Card takeEventCard() {
 		Card c = eventCards.get(RAND.nextInt(eventCards.size()));
-		if (cardsInHand.containsKey(c)) {
+		if (getCardOwner(c) != null) {
 			c = takeEventCard();
 		}
 		return c;
@@ -98,67 +108,31 @@ public class GameBoard {
 
 	public Card takeCommunityCard() {
 		Card c = communityCards.get(RAND.nextInt(communityCards.size()));
-		if (cardsInHand.containsKey(c)) {
+		if (getCardOwner(c) != null) {
 			c = takeEventCard();
 		}
 		return c;
 	}
 
 	public boolean pickupCard(Card c, Player p) {
-		if (c instanceof UnjailCard && !cardsInHand.containsKey(c)) {
-			cardsInHand.put(c, p);
+		if (c instanceof UnjailCard && getCardOwner(c) == null) {
+			p.addCard(c);
 		}
 		return false;
 	}
 
 	public boolean useCard(Card c, Player p) {
-		if (cardsInHand.containsKey(c)) {
-			if (cardsInHand.get(c) == p) {
-				cardsInHand.remove(c);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public List<Card> getCards(Player p) {
-		List<Card> cardsOfPlayer = new ArrayList<>();
-		for (Entry<Card, Player> e : cardsInHand.entrySet()) {
-			if (e.getValue() == p) {
-				cardsOfPlayer.add(e.getKey());
-			}
-		}
-		return cardsOfPlayer;
-	}
-
-	public boolean transferCard(Card c, Player source, Player target) {
-		if (cardsInHand.get(c) == source) {
-			cardsInHand.put(c, target);
+		if (getCardOwner(c) == p) {
+			p.removeCard(c);
 			return true;
 		}
 		return false;
 	}
 
 	public void setStreetOwnership(BuyableStreet s, Player p) {
-		buyableStreets.put(s, p);
-	}
-
-	public List<BuyableStreet> getStreetsOfPlayer(Player p) {
-		List<BuyableStreet> streetsOfPlayer = new ArrayList<>();
-		for (Entry<BuyableStreet, Player> e : buyableStreets.entrySet()) {
-			if (e.getValue() == p) {
-				streetsOfPlayer.add(e.getKey());
-			}
+		if (getStreetOwner(s) == null) {
+			p.addStreet(s);
 		}
-		return streetsOfPlayer;
-	}
-
-	public boolean transferStreet(BuyableStreet s, Player source, Player target) {
-		if (buyableStreets.get(s) == source) {
-			buyableStreets.put(s, target);
-			return true;
-		}
-		return false;
 	}
 
 	public void moveAmount(Player p, int amount, int moneyModifier) {
