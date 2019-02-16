@@ -9,10 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eva.monopoly.api.game.player.Player;
-import eva.monopoly.api.game.player.Player.Pawn;
 import eva.monopoly.api.network.api.SocketConnector;
 import eva.monopoly.api.network.messages.GameStateChanged;
 import eva.monopoly.api.network.messages.GameStateChanged.GameState;
+import eva.monopoly.api.network.messages.GetConnectedClients;
+import eva.monopoly.api.network.messages.GetConnectedClients.Client;
 import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
 import eva.monopoly.api.network.server.Server;
@@ -42,11 +43,17 @@ public class MonopolyServer {
 
 		try {
 			this.server = new Server(port, name, (con, e) -> {
+				try {
+					con.getSocket().close();
+				} catch (IOException e1) {
+				}
 				String clientName = server.getSocketConnectorName(con);
 				if (disconnectedPlayers.containsKey(clientName)) {
-					LOG.error("Der client " + name + " hat die Verbindung mit dem Server getrennt", e);
+					LOG.error("The client " + name + " disconnected", e);
 				} else {
-					LOG.error("Der client " + name + " hat die Verbindung mit dem Server unerwartet getrennt", e);
+					disconnectedPlayers.put(clientName, players.get(clientName));
+					players.remove(clientName);
+					LOG.error("Der client " + name + " disconnected unexpected", e);
 				}
 				server.closeConnection();
 			});
@@ -118,39 +125,15 @@ public class MonopolyServer {
 				}
 			}
 		});
+		server.registerClientHandle(GetConnectedClients.class, (con, clients) -> {
+			con.sendMessage(new GetConnectedClients(players));
+		});
 	}
 
 	private void startGame() {
 		for (Entry<String, Client> c : players.entrySet()) {
-			gameBoard.addPlayer(new Player(c.getKey(), c.getValue().playerPawn));
+			gameBoard.addPlayer(new Player(c.getKey(), c.getValue().getPlayerPawn()));
 		}
-		server.sendMessageToAll(new GameStateChanged(null, GameState.INGAME));
-	}
-
-	private static class Client {
-		private boolean ready;
-		private Pawn playerPawn;
-
-		public Client(boolean ready, Pawn playerPawn) {
-			this.ready = ready;
-			this.playerPawn = playerPawn;
-		}
-
-		public boolean isReady() {
-			return ready;
-		}
-
-		public void setReady(boolean ready) {
-			this.ready = ready;
-		}
-
-		public Pawn getPlayerPawn() {
-			return playerPawn;
-		}
-
-		public void setPlayerPawn(Pawn playerPawn) {
-			this.playerPawn = playerPawn;
-		}
-
+		server.sendMessageToAll(new GameStateChanged(GameState.INGAME));
 	}
 }
