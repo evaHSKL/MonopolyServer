@@ -7,8 +7,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import eva.monopoly.api.game.player.Player;
+import eva.monopoly.api.game.player.Player.Pawn;
 import eva.monopoly.api.network.api.SocketConnector;
+import eva.monopoly.api.network.messages.GameStateChanged;
+import eva.monopoly.api.network.messages.GameStateChanged.GameState;
+import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
 import eva.monopoly.api.network.server.Server;
 import eva.monopoly.server.game.GameBoard;
@@ -20,8 +23,8 @@ public class MonopolyServer {
 
 	private Server server;
 	private GameBoard gameBoard;
-	private Map<String, Player> clientsToPlayers;
-	private Map<String, Player> disconnectedPlayers;
+	private Map<String, Client> players;
+	private Map<String, Client> disconnectedPlayers;
 
 	public static void main(String[] args) {
 		String name = args.length > 0 ? args[0] : "Server";
@@ -31,7 +34,7 @@ public class MonopolyServer {
 
 	public MonopolyServer(int port, String name) {
 		this.gameBoard = new GameBoard();
-		this.clientsToPlayers = new HashMap<>();
+		this.players = new HashMap<>();
 
 		try {
 			this.server = new Server(port, name, (con, e) -> {
@@ -43,30 +46,57 @@ public class MonopolyServer {
 				}
 				server.closeConnection();
 			});
+			registerHandler();
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
 		}
 	}
 
-	public void registerHandler(Server s) {
-		s.registerClientHandle(PlayerStatusChanged.class, (con, state) -> {
-			String clientName = server.getSocketConnectorName(con);
+	public void registerHandler() {
+		server.registerClientHandle(PlayerStatusChanged.class, (con, state) -> {
+			String clientName = state.getName();
 			switch (state.getState()) {
 			case CONNECTED:
-				clientsToPlayers.put(clientName, null);
+				players.put(clientName, new Client(false, null));
 				break;
 			case DISCONNECTED:
 			case LOSTCONNECTION:
-				disconnectedPlayers.put(clientName, clientsToPlayers.get(clientName));
-				clientsToPlayers.remove(clientName);
+				disconnectedPlayers.put(clientName, players.get(clientName));
+				players.remove(clientName);
 				break;
 			case RECONNECTED:
-				clientsToPlayers.put(clientName, disconnectedPlayers.get(clientName));
+				players.put(clientName, disconnectedPlayers.get(clientName));
 				disconnectedPlayers.remove(clientName);
 				break;
 			}
 			LOG.debug("Client '" + clientName + "' " + state.getState());
-			server.sendMessageToAllExcept(new PlayerStatusChanged(clientName, state.getState()), con);
+			server.sendMessageToAllExcept(state, con);
+		});
+		server.registerClientHandle(PawnChanged.class, (con, pawn) -> {
+			Client client = players.get(pawn.getName());
+			if (client.isReady()) {
+				con.sendMessage(new PawnChanged(pawn.getName(), client.getPlayerPawn()));
+				return;
+			}
+			players.get(pawn.getName()).setPlayerPawn(pawn.getPawn());
+			server.sendMessageToAllExcept(pawn, con);
+		});
+		server.registerClientHandle(GameStateChanged.class, (con, state) -> {
+			boolean ready = GameState.READY.equals(state.getGameState());
+			boolean pregame = GameState.PREGAME.equals(state.getGameState());
+			if (ready || pregame) {
+				if (ready) {
+					Client c = players.get(state.getName());
+					for (Client cl : players.values()) {
+						if (c != cl && c.getPlayerPawn() != null && !c.getPlayerPawn().equals(cl.getPlayerPawn())) {
+							con.sendMessage(new GameStateChanged(state.getName(), GameState.PREGAME));
+							return;
+						}
+					}
+				}
+				players.get(state.getName()).setReady(ready);
+				server.sendMessageToAllExcept(state, con);
+			}
 		});
 	}
 
@@ -76,5 +106,32 @@ public class MonopolyServer {
 
 	public GameBoard getGameBoard() {
 		return gameBoard;
+	}
+
+	private static class Client {
+		private boolean ready;
+		private Pawn playerPawn;
+
+		public Client(boolean ready, Pawn playerPawn) {
+			this.ready = ready;
+			this.playerPawn = playerPawn;
+		}
+
+		public boolean isReady() {
+			return ready;
+		}
+
+		public void setReady(boolean ready) {
+			this.ready = ready;
+		}
+
+		public Pawn getPlayerPawn() {
+			return playerPawn;
+		}
+
+		public void setPlayerPawn(Pawn playerPawn) {
+			this.playerPawn = playerPawn;
+		}
+
 	}
 }
