@@ -25,6 +25,7 @@ import eva.monopoly.api.network.messages.PlayerStatusChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged.ConnectionState;
 import eva.monopoly.api.network.messages.RollDice;
 import eva.monopoly.api.network.messages.StartStopRound;
+import eva.monopoly.api.network.messages.StreetBuyed;
 import eva.monopoly.api.network.messages.Unjail;
 import eva.monopoly.api.network.messages.Unjail.UnjailReason;
 import eva.monopoly.api.network.server.Server;
@@ -303,6 +304,7 @@ public class MonopolyServer {
 
 					p.modifyMoney(-buyableStreet.getCost());
 					p.addStreet(buyableStreet);
+					server.sendMessageToAll(new StreetBuyed(clientName, buyableStreet));
 				} else {
 					// TODO AUKTION
 				}
