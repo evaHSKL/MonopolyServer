@@ -1,6 +1,7 @@
 package eva.monopoly.server.game;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -22,6 +23,7 @@ public class GameBoard {
 	public final static Random RAND = new Random();
 
 	private final List<Player> players;
+	private int playerIsPlaying;
 	private final List<Card> eventCards;
 	private final List<Card> communityCards;
 	private final List<BuyableStreet> buyableStreets;
@@ -29,6 +31,7 @@ public class GameBoard {
 
 	public GameBoard() {
 		players = new ArrayList<>();
+		playerIsPlaying = 0;
 		Entry<ArrayList<Card>, ArrayList<Card>> loadedcards = Cards.loadCards();
 		eventCards = loadedcards.getKey();
 		communityCards = loadedcards.getValue();
@@ -96,6 +99,21 @@ public class GameBoard {
 			}
 		}
 		return null;
+	}
+
+	public void shufflePlayers() {
+		Collections.shuffle(players);
+	}
+
+	public void nextPlayer() {
+		playerIsPlaying++;
+		if (playerIsPlaying > players.size() - 1) {
+			playerIsPlaying = 0;
+		}
+	}
+
+	public Player getPlayerIsPlaying() {
+		return players.get(playerIsPlaying);
 	}
 
 	public Card takeEventCard() {

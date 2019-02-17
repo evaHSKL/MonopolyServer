@@ -14,8 +14,11 @@ import eva.monopoly.api.network.messages.GameStateChanged;
 import eva.monopoly.api.network.messages.GameStateChanged.GameState;
 import eva.monopoly.api.network.messages.GetConnectedClients;
 import eva.monopoly.api.network.messages.GetConnectedClients.Client;
+import eva.monopoly.api.network.messages.GetPlayers;
 import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
+import eva.monopoly.api.network.messages.PlayerStatusChanged.ConnectionState;
+import eva.monopoly.api.network.messages.StartStopRound;
 import eva.monopoly.api.network.server.Server;
 import eva.monopoly.server.game.GameBoard;
 
@@ -37,7 +40,7 @@ public class MonopolyServer {
 	}
 
 	public MonopolyServer(int port, String name) {
-		gameState = gameState.PREGAME;
+		this.gameState = GameState.PREGAME;
 		this.gameBoard = new GameBoard();
 		this.players = new HashMap<>();
 		this.disconnectedPlayers = new HashMap<>();
@@ -45,14 +48,15 @@ public class MonopolyServer {
 		try {
 			this.server = new Server(port, name, (con, e) -> {
 				String clientName = server.getSocketConnectorName(con);
+				server.closeConnection(clientName);
 				if (disconnectedPlayers.containsKey(clientName)) {
 					LOG.error("The client " + clientName + " disconnected");
 				} else {
 					disconnectedPlayers.put(clientName, players.get(clientName));
 					players.remove(clientName);
+					server.sendMessageToAll(new PlayerStatusChanged(clientName, ConnectionState.LOSTCONNECTION));
 					LOG.error("The client " + clientName + " disconnected unexpected");
 				}
-				server.closeConnection(clientName);
 			});
 			registerHandler();
 		} catch (IOException e) {
@@ -69,14 +73,33 @@ public class MonopolyServer {
 	}
 
 	public void registerHandler() {
+		registerPlayerStatusChanged();
+		registerPawnChanged();
+		registerGameStateChanged();
+		registerGetConnectedClients();
+		registerGetPlayers();
+		registerStartStopRound();
+	}
+
+	private void registerPlayerStatusChanged() {
 		server.registerClientHandle(PlayerStatusChanged.class, (con, state) -> {
 			String clientName = state.getName();
 			switch (state.getState()) {
 			case CONNECTED:
-				players.put(clientName, new Client(false, null));
+				if (gameState == GameState.PREGAME) {
+					players.put(clientName, new Client(false, null));
+				} else {
+					ConnectionState toSend = !disconnectedPlayers.containsKey(clientName)
+							|| gameState.equals(GameState.FINISHED) ? ConnectionState.DISCONNECTED
+									: ConnectionState.RECONNECTED;
+					con.sendMessage(new PlayerStatusChanged(clientName, toSend));
+					if (toSend.equals(ConnectionState.DISCONNECTED)) {
+						server.closeConnection(clientName);
+					}
+					return;
+				}
 				break;
 			case DISCONNECTED:
-			case LOSTCONNECTION:
 				disconnectedPlayers.put(clientName, players.get(clientName));
 				players.remove(clientName);
 				break;
@@ -84,10 +107,15 @@ public class MonopolyServer {
 				players.put(clientName, disconnectedPlayers.get(clientName));
 				disconnectedPlayers.remove(clientName);
 				break;
+			case LOSTCONNECTION:
+				return;
 			}
 			LOG.debug("Client '" + clientName + "' " + state.getState());
 			server.sendMessageToAll(state);
 		});
+	}
+
+	private void registerPawnChanged() {
 		server.registerClientHandle(PawnChanged.class, (con, pawn) -> {
 			Client client = players.get(pawn.getName());
 			if (client.isReady()) {
@@ -97,6 +125,9 @@ public class MonopolyServer {
 			players.get(pawn.getName()).setPlayerPawn(pawn.getPawn());
 			server.sendMessageToAll(pawn);
 		});
+	}
+
+	private void registerGameStateChanged() {
 		server.registerClientHandle(GameStateChanged.class, (con, state) -> {
 			boolean ready = GameState.READY.equals(state.getGameState());
 			boolean pregame = GameState.PREGAME.equals(state.getGameState());
@@ -113,6 +144,9 @@ public class MonopolyServer {
 				players.get(state.getName()).setReady(ready);
 				server.sendMessageToAll(state);
 				if (ready) {
+					if (players.size() == 1) {
+						return;
+					}
 					for (Client c : players.values()) {
 						if (!c.isReady()) {
 							return;
@@ -122,8 +156,24 @@ public class MonopolyServer {
 				}
 			}
 		});
+	}
+
+	private void registerGetConnectedClients() {
 		server.registerClientHandle(GetConnectedClients.class, (con, clients) -> {
 			con.sendMessage(new GetConnectedClients(players));
+		});
+	}
+
+	private void registerGetPlayers() {
+		server.registerClientHandle(GetPlayers.class, (con, get) -> {
+			con.sendMessage(new GetPlayers(gameBoard.getPlayers()));
+		});
+	}
+
+	private void registerStartStopRound() {
+		server.registerClientHandle(StartStopRound.class, (con, round) -> {
+			gameBoard.nextPlayer();
+			server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
 		});
 	}
 
@@ -132,5 +182,10 @@ public class MonopolyServer {
 			gameBoard.addPlayer(new Player(c.getKey(), c.getValue().getPlayerPawn()));
 		}
 		server.sendMessageToAll(new GameStateChanged(GameState.INGAME));
+		gameState = GameState.INGAME;
+		server.sendMessageToAll(new GetPlayers(gameBoard.getPlayers()));
+
+		gameBoard.shufflePlayers();
+		server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
 	}
 }
