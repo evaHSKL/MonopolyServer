@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +19,15 @@ import eva.monopoly.api.network.messages.GetPlayers;
 import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged.ConnectionState;
+import eva.monopoly.api.network.messages.RollDice;
 import eva.monopoly.api.network.messages.StartStopRound;
+import eva.monopoly.api.network.messages.Unjail;
 import eva.monopoly.api.network.server.Server;
 import eva.monopoly.server.game.GameBoard;
 
 public class MonopolyServer {
 	public final static Logger LOG = LoggerFactory.getLogger(MonopolyServer.class);
+	private final static Random RANDOM = new Random();
 
 	private static MonopolyServer instance;
 
@@ -72,6 +76,10 @@ public class MonopolyServer {
 		return gameBoard;
 	}
 
+	public Server getServer() {
+		return server;
+	}
+
 	public void registerHandler() {
 		registerPlayerStatusChanged();
 		registerPawnChanged();
@@ -79,6 +87,8 @@ public class MonopolyServer {
 		registerGetConnectedClients();
 		registerGetPlayers();
 		registerStartStopRound();
+		registerRollDice();
+		registerUnjail();
 	}
 
 	private void registerPlayerStatusChanged() {
@@ -174,6 +184,44 @@ public class MonopolyServer {
 		server.registerClientHandle(StartStopRound.class, (con, round) -> {
 			gameBoard.nextPlayer();
 			server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
+		});
+	}
+
+	private void registerRollDice() {
+		final Map<String, Integer> playerDoublets = new HashMap<>();
+
+		server.registerClientHandle(RollDice.class, (con, dice) -> {
+			if (dice.getName().equals(gameBoard.getPlayerIsPlaying().getName())) {
+				boolean doublets = false;
+				int dice1 = RANDOM.nextInt(6) + 1;
+				int dice2 = RANDOM.nextInt(6) + 1;
+				boolean jail = false;
+
+				if (dice1 == dice2) {
+					doublets = true;
+					Integer diceBefor = playerDoublets.get(dice.getName());
+					playerDoublets.put(dice.getName(), diceBefor == null ? 1 : diceBefor++);
+				} else {
+					playerDoublets.put(dice.getName(), 0);
+				}
+
+				int amount = dice1 + dice2;
+
+				Player p = gameBoard.getPlayer(dice.getName());
+				if (playerDoublets.get(dice.getName()) == 3) {
+					p.sendToJail();
+					jail = true;
+				} else {
+					gameBoard.moveAmount(p, amount, 1);
+				}
+				server.sendMessageToAll(new RollDice(dice.getName(), amount, doublets, jail));
+			}
+		});
+	}
+
+	private void registerUnjail() {
+		server.registerClientHandle(Unjail.class, (con, unjail) -> {
+
 		});
 	}
 

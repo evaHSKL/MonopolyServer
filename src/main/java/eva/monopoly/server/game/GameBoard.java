@@ -165,7 +165,7 @@ public class GameBoard {
 		streets.get(pos).action(p, amount, moneyModifier);
 	}
 
-	public void moveTarget(Player p, String target, int moneyModifier) {
+	public int moveTarget(Player p, String target, int moneyModifier) {
 		int targetIndex = -1;
 		for (Street s : streets) {
 			if (s.getName().equals(target)) {
@@ -188,6 +188,9 @@ public class GameBoard {
 		}
 
 		int amount = targetIndex - p.getPositionIndex();
-		moveAmount(p, amount <= 0 ? streets.size() - amount : amount, moneyModifier);
+		amount = amount <= 0 ? streets.size() + amount : amount;
+		moveAmount(p, amount, moneyModifier);
+
+		return amount;
 	}
 }
