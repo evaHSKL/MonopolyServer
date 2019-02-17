@@ -9,9 +9,9 @@ import eva.monopoly.api.network.messages.CardPulled;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
-public class MoneybuildingsCard extends eva.monopoly.api.game.card.cards.MoneybuildingsCard {
+public class MoneyBuildingsCard extends eva.monopoly.api.game.card.cards.MoneyBuildingsCard {
 
-	public MoneybuildingsCard(String text, CardType type, int house, int hotel) {
+	public MoneyBuildingsCard(String text, CardType type, int house, int hotel) {
 		super(text, type, house, hotel);
 	}
 

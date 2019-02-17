@@ -16,10 +16,10 @@ import eva.monopoly.api.game.card.Card.CardType;
 import eva.monopoly.server.game.GameBoard;
 import eva.monopoly.server.game.card.cards.JailCard;
 import eva.monopoly.server.game.card.cards.MoneyCard;
-import eva.monopoly.server.game.card.cards.MoneybuildingsCard;
-import eva.monopoly.server.game.card.cards.MoneyplayerCard;
-import eva.monopoly.server.game.card.cards.MoveCard;
-import eva.monopoly.server.game.card.cards.MoveamountCard;
+import eva.monopoly.server.game.card.cards.MoneyBuildingsCard;
+import eva.monopoly.server.game.card.cards.MoneyPlayerCard;
+import eva.monopoly.server.game.card.cards.MoveTargetCard;
+import eva.monopoly.server.game.card.cards.MoveAmountCard;
 import eva.monopoly.server.game.card.cards.MovemoneydoubleCard;
 import eva.monopoly.server.game.card.cards.UnjailCard;
 import eva.monopoly.server.util.ResourceReaderUtil;
@@ -84,11 +84,11 @@ public class Cards {
 			break;
 		case "move":
 			target = objAction.get("target").getAsString();
-			card = new MoveCard(text, type, target);
+			card = new MoveTargetCard(text, type, target);
 			break;
 		case "moveamount":
 			amount = objAction.get("amount").getAsInt();
-			card = new MoveamountCard(text, type, amount);
+			card = new MoveAmountCard(text, type, amount);
 			break;
 		case "movemoneydouble":
 			target = objAction.get("target").getAsString();
@@ -101,11 +101,11 @@ public class Cards {
 		case "moneybuildings":
 			house = objAction.get("house").getAsInt();
 			hotel = objAction.get("hotel").getAsInt();
-			card = new MoneybuildingsCard(text, type, house, hotel);
+			card = new MoneyBuildingsCard(text, type, house, hotel);
 			break;
 		case "moneyplayer":
 			amount = objAction.get("amount").getAsInt();
-			card = new MoneyplayerCard(text, type, amount);
+			card = new MoneyPlayerCard(text, type, amount);
 			break;
 		default:
 			throw new IllegalArgumentException("type '" + actionType + "' is unknown");

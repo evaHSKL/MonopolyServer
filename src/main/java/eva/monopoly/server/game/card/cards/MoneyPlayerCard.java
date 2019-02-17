@@ -7,9 +7,9 @@ import eva.monopoly.api.network.messages.CardPulled;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
-public class MoneyplayerCard extends eva.monopoly.api.game.card.cards.MoneyplayerCard {
+public class MoneyPlayerCard extends eva.monopoly.api.game.card.cards.MoneyPlayersCard {
 
-	public MoneyplayerCard(String text, CardType type, int amount) {
+	public MoneyPlayerCard(String text, CardType type, int amount) {
 		super(text, type, amount);
 	}
 
