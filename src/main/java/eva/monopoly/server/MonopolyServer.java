@@ -43,10 +43,6 @@ public class MonopolyServer {
 
 		try {
 			this.server = new Server(port, name, (con, e) -> {
-				try {
-					con.getSocket().close();
-				} catch (IOException e1) {
-				}
 				String clientName = server.getSocketConnectorName(con);
 				if (disconnectedPlayers.containsKey(clientName)) {
 					LOG.error("The client " + name + " disconnected", e);
@@ -55,7 +51,7 @@ public class MonopolyServer {
 					players.remove(clientName);
 					LOG.error("Der client " + name + " disconnected unexpected", e);
 				}
-				server.closeConnection();
+				server.closeConnection(clientName);
 			});
 			registerHandler();
 		} catch (IOException e) {
