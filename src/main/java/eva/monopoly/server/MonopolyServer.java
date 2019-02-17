@@ -40,16 +40,17 @@ public class MonopolyServer {
 		gameState = gameState.PREGAME;
 		this.gameBoard = new GameBoard();
 		this.players = new HashMap<>();
+		this.disconnectedPlayers = new HashMap<>();
 
 		try {
 			this.server = new Server(port, name, (con, e) -> {
 				String clientName = server.getSocketConnectorName(con);
 				if (disconnectedPlayers.containsKey(clientName)) {
-					LOG.error("The client " + name + " disconnected", e);
+					LOG.error("The client " + clientName + " disconnected");
 				} else {
 					disconnectedPlayers.put(clientName, players.get(clientName));
 					players.remove(clientName);
-					LOG.error("Der client " + name + " disconnected unexpected", e);
+					LOG.error("The client " + clientName + " disconnected unexpected");
 				}
 				server.closeConnection(clientName);
 			});
