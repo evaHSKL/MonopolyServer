@@ -64,15 +64,6 @@ public class GameBoard {
 		return streets;
 	}
 
-	public Player getStreetOwner(BuyableStreet s) {
-		for (Player p : players) {
-			if (p.getStreets().contains(s)) {
-				return p;
-			}
-		}
-		return null;
-	}
-
 	public Player getCardOwner(Card c) {
 		for (Player p : players) {
 			if (p.getCards().contains(c)) {
@@ -145,12 +136,6 @@ public class GameBoard {
 			return true;
 		}
 		return false;
-	}
-
-	public void setStreetOwnership(BuyableStreet s, Player p) {
-		if (getStreetOwner(s) == null) {
-			p.addStreet(s);
-		}
 	}
 
 	public void moveAmount(Player p, int amount, int moneyModifier) {

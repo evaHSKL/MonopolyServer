@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eva.monopoly.api.game.player.Player;
+import eva.monopoly.api.game.street.BuyableStreet;
+import eva.monopoly.api.game.street.Street;
 import eva.monopoly.api.network.api.ExchangeMessage;
 import eva.monopoly.api.network.api.SocketConnector;
 import eva.monopoly.api.network.messages.BuyStreet;
@@ -17,7 +19,6 @@ import eva.monopoly.api.network.messages.GameStateChanged;
 import eva.monopoly.api.network.messages.GameStateChanged.GameState;
 import eva.monopoly.api.network.messages.GetConnectedClients;
 import eva.monopoly.api.network.messages.GetConnectedClients.Client;
-import eva.monopoly.api.network.messages.GetMoveData;
 import eva.monopoly.api.network.messages.GetPlayers;
 import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
@@ -94,7 +95,6 @@ public class MonopolyServer {
 		registerRollDice();
 		registerUnjail();
 		registerBuyStreet();
-		registerGetMoveData();
 	}
 
 	private void registerPlayerStatusChanged() {
@@ -293,15 +293,19 @@ public class MonopolyServer {
 				return;
 			}
 			String clientName = msg.getName();
-		});
-	}
 
-	private void registerGetMoveData() {
-		server.registerClientHandle(GetMoveData.class, (con, msg) -> {
-			if (!checkClient(con, msg)) {
-				return;
+			Player p = gameBoard.getPlayer(clientName);
+			Street s = gameBoard.getStreets().get(p.getPositionIndex());
+			if (s instanceof BuyableStreet) {
+				if (msg.isBuy()) {
+					BuyableStreet buyableStreet = (BuyableStreet) s;
+
+					p.modifyMoney(-buyableStreet.getCost());
+					p.addStreet(buyableStreet);
+				} else {
+					// TODO AUKTION
+				}
 			}
-			String clientName = msg.getName();
 		});
 	}
 
