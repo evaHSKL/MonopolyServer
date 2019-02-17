@@ -71,8 +71,8 @@ public class Cards {
 		int amount;
 		int house;
 		int hotel;
-		int modifier;
-		boolean buyable;
+		int modifier = 1;
+		boolean buyable = false;
 
 		Card card = null;
 
@@ -85,13 +85,19 @@ public class Cards {
 			break;
 		case "movetarget":
 			target = objAction.get("target").getAsString();
-			modifier = objAction.get("modifier").getAsInt();
-			buyable = objAction.get("buyable").getAsBoolean();
+			if (objAction.has("modifier")) {
+				modifier = objAction.get("modifier").getAsInt();
+			}
+			if (objAction.has("buyable")) {
+				buyable = objAction.get("buyable").getAsBoolean();
+			}
 			card = new MoveTargetCard(text, type, target, modifier, buyable);
 			break;
 		case "moveamount":
 			amount = objAction.get("amount").getAsInt();
-			modifier = objAction.get("modifier").getAsInt();
+			if (objAction.has("modifier")) {
+				modifier = objAction.get("modifier").getAsInt();
+			}
 			card = new MoveAmountCard(text, type, amount, modifier);
 			break;
 		case "money":
