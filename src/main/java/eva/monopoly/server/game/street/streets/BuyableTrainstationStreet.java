@@ -10,6 +10,7 @@ import eva.monopoly.api.network.messages.StreetEntered;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
+@SuppressWarnings("serial")
 public class BuyableTrainstationStreet extends eva.monopoly.api.game.street.streets.BuyableTrainstationStreet {
 
 	public BuyableTrainstationStreet(String name, int mortgageValue, String group, int cost, int onestation,

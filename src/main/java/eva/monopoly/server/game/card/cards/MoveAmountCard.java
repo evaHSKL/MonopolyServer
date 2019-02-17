@@ -7,6 +7,7 @@ import eva.monopoly.api.network.messages.CardPulled;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
+@SuppressWarnings("serial")
 public class MoveAmountCard extends eva.monopoly.api.game.card.cards.MoveAmountCard {
 
 	public MoveAmountCard(String text, CardType type, int amount, int moneyModyfire) {

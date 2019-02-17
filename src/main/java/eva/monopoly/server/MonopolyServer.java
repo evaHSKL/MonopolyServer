@@ -165,7 +165,8 @@ public class MonopolyServer {
 				if (ready) {
 					Client c = players.get(clientName);
 					for (Client cl : players.values()) {
-						if (c != cl && c.getPlayerPawn() != null && !c.getPlayerPawn().equals(cl.getPlayerPawn())) {
+						if (c.getPlayerPawn() == null || c != cl && c.getPlayerPawn() != null
+								&& c.getPlayerPawn().equals(cl.getPlayerPawn())) {
 							con.sendMessage(new GameStateChanged(clientName, GameState.PREGAME));
 							return;
 						}

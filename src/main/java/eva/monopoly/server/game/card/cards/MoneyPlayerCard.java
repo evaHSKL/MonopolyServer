@@ -7,6 +7,7 @@ import eva.monopoly.api.network.messages.CardPulled;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
+@SuppressWarnings("serial")
 public class MoneyPlayerCard extends eva.monopoly.api.game.card.cards.MoneyPlayersCard {
 
 	public MoneyPlayerCard(String text, CardType type, int amount) {

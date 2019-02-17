@@ -7,6 +7,7 @@ import eva.monopoly.api.network.messages.CardPulled;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
+@SuppressWarnings("serial")
 public class UnjailCard extends eva.monopoly.api.game.card.cards.UnjailCard {
 
 	public UnjailCard(String text, CardType type) {

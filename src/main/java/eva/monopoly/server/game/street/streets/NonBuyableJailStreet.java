@@ -7,6 +7,7 @@ import eva.monopoly.api.network.messages.StreetEntered;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
+@SuppressWarnings("serial")
 public class NonBuyableJailStreet extends eva.monopoly.api.game.street.streets.NonBuyableJailStreet {
 
 	public NonBuyableJailStreet(String name) {
