@@ -10,11 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eva.monopoly.api.game.player.Player;
+import eva.monopoly.api.network.api.ExchangeMessage;
 import eva.monopoly.api.network.api.SocketConnector;
+import eva.monopoly.api.network.messages.BuyStreet;
 import eva.monopoly.api.network.messages.GameStateChanged;
 import eva.monopoly.api.network.messages.GameStateChanged.GameState;
 import eva.monopoly.api.network.messages.GetConnectedClients;
 import eva.monopoly.api.network.messages.GetConnectedClients.Client;
+import eva.monopoly.api.network.messages.GetMoveData;
 import eva.monopoly.api.network.messages.GetPlayers;
 import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
@@ -22,6 +25,7 @@ import eva.monopoly.api.network.messages.PlayerStatusChanged.ConnectionState;
 import eva.monopoly.api.network.messages.RollDice;
 import eva.monopoly.api.network.messages.StartStopRound;
 import eva.monopoly.api.network.messages.Unjail;
+import eva.monopoly.api.network.messages.Unjail.UnjailReason;
 import eva.monopoly.api.network.server.Server;
 import eva.monopoly.server.game.GameBoard;
 
@@ -89,21 +93,27 @@ public class MonopolyServer {
 		registerStartStopRound();
 		registerRollDice();
 		registerUnjail();
+		registerBuyStreet();
+		registerGetMoveData();
 	}
 
 	private void registerPlayerStatusChanged() {
-		server.registerClientHandle(PlayerStatusChanged.class, (con, state) -> {
-			String clientName = state.getName();
-			switch (state.getState()) {
+		server.registerClientHandle(PlayerStatusChanged.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
+
+			switch (msg.getState()) {
 			case CONNECTED:
 				if (gameState == GameState.PREGAME) {
 					players.put(clientName, new Client(false, null));
 				} else {
-					ConnectionState toSend = !disconnectedPlayers.containsKey(clientName)
-							|| gameState.equals(GameState.FINISHED) ? ConnectionState.DISCONNECTED
+					ConnectionState stateToSend = (gameState.equals(GameState.FINISHED)
+							|| !disconnectedPlayers.containsKey(clientName)) ? ConnectionState.DISCONNECTED
 									: ConnectionState.RECONNECTED;
-					con.sendMessage(new PlayerStatusChanged(clientName, toSend));
-					if (toSend.equals(ConnectionState.DISCONNECTED)) {
+					con.sendMessage(new PlayerStatusChanged(clientName, stateToSend));
+					if (stateToSend.equals(ConnectionState.DISCONNECTED)) {
 						server.closeConnection(clientName);
 					}
 					return;
@@ -120,39 +130,49 @@ public class MonopolyServer {
 			case LOSTCONNECTION:
 				return;
 			}
-			LOG.debug("Client '" + clientName + "' " + state.getState());
-			server.sendMessageToAll(state);
+			LOG.debug("Client '" + clientName + "' " + msg.getState());
+			server.sendMessageToAll(msg);
 		});
 	}
 
 	private void registerPawnChanged() {
-		server.registerClientHandle(PawnChanged.class, (con, pawn) -> {
-			Client client = players.get(pawn.getName());
-			if (client.isReady()) {
-				con.sendMessage(new PawnChanged(pawn.getName(), client.getPlayerPawn()));
+		server.registerClientHandle(PawnChanged.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
 				return;
 			}
-			players.get(pawn.getName()).setPlayerPawn(pawn.getPawn());
-			server.sendMessageToAll(pawn);
+			String clientName = msg.getName();
+
+			Client client = players.get(clientName);
+			if (client.isReady()) {
+				con.sendMessage(new PawnChanged(clientName, client.getPlayerPawn()));
+				return;
+			}
+			players.get(clientName).setPlayerPawn(msg.getPawn());
+			server.sendMessageToAll(msg);
 		});
 	}
 
 	private void registerGameStateChanged() {
-		server.registerClientHandle(GameStateChanged.class, (con, state) -> {
-			boolean ready = GameState.READY.equals(state.getGameState());
-			boolean pregame = GameState.PREGAME.equals(state.getGameState());
+		server.registerClientHandle(GameStateChanged.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
+
+			boolean ready = GameState.READY.equals(msg.getGameState());
+			boolean pregame = GameState.PREGAME.equals(msg.getGameState());
 			if (ready || pregame) {
 				if (ready) {
-					Client c = players.get(state.getName());
+					Client c = players.get(clientName);
 					for (Client cl : players.values()) {
 						if (c != cl && c.getPlayerPawn() != null && !c.getPlayerPawn().equals(cl.getPlayerPawn())) {
-							con.sendMessage(new GameStateChanged(state.getName(), GameState.PREGAME));
+							con.sendMessage(new GameStateChanged(clientName, GameState.PREGAME));
 							return;
 						}
 					}
 				}
-				players.get(state.getName()).setReady(ready);
-				server.sendMessageToAll(state);
+				players.get(clientName).setReady(ready);
+				server.sendMessageToAll(msg);
 				if (ready) {
 					if (players.size() == 1) {
 						return;
@@ -169,19 +189,28 @@ public class MonopolyServer {
 	}
 
 	private void registerGetConnectedClients() {
-		server.registerClientHandle(GetConnectedClients.class, (con, clients) -> {
+		server.registerClientHandle(GetConnectedClients.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
 			con.sendMessage(new GetConnectedClients(players));
 		});
 	}
 
 	private void registerGetPlayers() {
-		server.registerClientHandle(GetPlayers.class, (con, get) -> {
+		server.registerClientHandle(GetPlayers.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
 			con.sendMessage(new GetPlayers(gameBoard.getPlayers()));
 		});
 	}
 
 	private void registerStartStopRound() {
-		server.registerClientHandle(StartStopRound.class, (con, round) -> {
+		server.registerClientHandle(StartStopRound.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
 			gameBoard.nextPlayer();
 			server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
 		});
@@ -190,38 +219,89 @@ public class MonopolyServer {
 	private void registerRollDice() {
 		final Map<String, Integer> playerDoublets = new HashMap<>();
 
-		server.registerClientHandle(RollDice.class, (con, dice) -> {
-			if (dice.getName().equals(gameBoard.getPlayerIsPlaying().getName())) {
+		server.registerClientHandle(RollDice.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
+
+			if (isPlayingPlayer(clientName)) {
 				boolean doublets = false;
 				int dice1 = RANDOM.nextInt(6) + 1;
 				int dice2 = RANDOM.nextInt(6) + 1;
-				boolean jail = false;
-
 				if (dice1 == dice2) {
 					doublets = true;
-					Integer diceBefor = playerDoublets.get(dice.getName());
-					playerDoublets.put(dice.getName(), diceBefor == null ? 1 : diceBefor++);
+					Integer diceBefor = playerDoublets.get(clientName);
+					playerDoublets.put(clientName, diceBefor == null ? 1 : diceBefor++);
 				} else {
-					playerDoublets.put(dice.getName(), 0);
+					playerDoublets.put(clientName, 0);
 				}
-
+				Player p = gameBoard.getPlayer(clientName);
 				int amount = dice1 + dice2;
-
-				Player p = gameBoard.getPlayer(dice.getName());
-				if (playerDoublets.get(dice.getName()) == 3) {
-					p.sendToJail();
-					jail = true;
+				if (p.isJailed()) {
+					if (doublets) {
+						p.unjail();
+						server.sendMessageToAll(new RollDice(clientName, amount, doublets, false));
+					} else {
+						if (p.hasToLeaveJail()) {
+							p.unjail();
+							p.modifyMoney(-50);
+							server.sendMessageToAll(new Unjail(clientName, UnjailReason.PAYED));
+							server.sendMessageToAll(new RollDice(clientName, amount, doublets, false));
+						} else {
+							server.sendMessageToAll(new RollDice(clientName, amount, doublets, true));
+						}
+					}
+					return;
+				}
+				if (playerDoublets.get(clientName) == 3) {
+					p.jail();
 				} else {
 					gameBoard.moveAmount(p, amount, 1);
 				}
-				server.sendMessageToAll(new RollDice(dice.getName(), amount, doublets, jail));
+				server.sendMessageToAll(new RollDice(msg.getName(), amount, doublets, p.isJailed()));
 			}
 		});
 	}
 
 	private void registerUnjail() {
-		server.registerClientHandle(Unjail.class, (con, unjail) -> {
+		server.registerClientHandle(Unjail.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
 
+			Player p = gameBoard.getPlayer(clientName);
+
+			switch (msg.getReason()) {
+			case CARD:
+				if (!p.useUnjailCard()) {
+					return;
+				}
+				break;
+			case PAYED:
+				p.modifyMoney(-50);
+				break;
+			}
+			server.sendMessageToAll(msg);
+		});
+	}
+
+	private void registerBuyStreet() {
+		server.registerClientHandle(BuyStreet.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
+		});
+	}
+
+	private void registerGetMoveData() {
+		server.registerClientHandle(GetMoveData.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
 		});
 	}
 
@@ -235,5 +315,13 @@ public class MonopolyServer {
 
 		gameBoard.shufflePlayers();
 		server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
+	}
+
+	private boolean checkClient(SocketConnector con, ExchangeMessage msg) {
+		return server.getSocketConnectorName(con).equals(msg.getName());
+	}
+
+	private boolean isPlayingPlayer(String name) {
+		return name.equals(gameBoard.getPlayerIsPlaying().getName());
 	}
 }

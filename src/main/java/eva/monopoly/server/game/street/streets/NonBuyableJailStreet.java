@@ -20,7 +20,7 @@ public class NonBuyableJailStreet extends eva.monopoly.api.game.street.streets.N
 		MonopolyServer.getInstance().getServer()
 				.sendMessageToAll(new StreetEntered(p.getName(), this, OptionalInt.empty(), p.getMoney()));
 
-		p.sendToJail();
+		p.jail();
 	}
 
 }

@@ -20,7 +20,7 @@ public class JailCard extends eva.monopoly.api.game.card.cards.JailCard {
 		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this, OptionalInt.empty(),
 				p.getMoney(), OptionalInt.empty(), p.getPositionIndex()));
 
-		p.sendToJail();
+		p.jail();
 
 	}
 }
