@@ -16,6 +16,7 @@ public class MoneyplayerCard extends eva.monopoly.api.game.card.cards.Moneyplaye
 	@Override
 	public void action(Player p) {
 		GameBoard.LOG.debug(this.getClass().getSimpleName() + " was pulled by Player " + p.getName());
+
 		for (Player pl : MonopolyServer.getInstance().getGameBoard().getPlayers()) {
 			if (pl != p) {
 				pl.modifyMoney(-amount);

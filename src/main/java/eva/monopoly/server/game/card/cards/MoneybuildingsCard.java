@@ -28,7 +28,6 @@ public class MoneybuildingsCard extends eva.monopoly.api.game.card.cards.Moneybu
 				amountHotels += (s.getHouses() == 5 ? 1 : 0);
 			}
 		}
-
 		int amount = -(amountHouses * houseCosts + amountHotels * hotelCosts);
 		p.modifyMoney(amount);
 
