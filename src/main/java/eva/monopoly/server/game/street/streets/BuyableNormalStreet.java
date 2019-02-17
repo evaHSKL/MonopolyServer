@@ -26,7 +26,7 @@ public class BuyableNormalStreet extends eva.monopoly.api.game.street.streets.Bu
 
 	@Override
 	public void action(Player p, int dice, int modifier) {
-		int fee = chargeFee(p, dice, getOwner(), modifier);
+		int fee = -chargeFee(p, dice, getOwner(), modifier);
 
 		GameBoard.LOG.debug(p.getName() + " has entered " + getName() + " owned by "
 				+ (getOwner() != null ? getOwner().getName() + (fee != 0 ? " for a fee of " + fee : "") : "noone"));
