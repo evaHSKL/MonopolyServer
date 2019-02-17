@@ -17,9 +17,9 @@ public class UnjailCard extends eva.monopoly.api.game.card.cards.UnjailCard {
 	public void action(Player p) {
 		GameBoard.LOG.debug(this.getClass().getSimpleName() + " was pulled by Player " + p.getName());
 
-		MonopolyServer.getInstance().getGameBoard().pickupCard(this, p);
-
 		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this, OptionalInt.empty(),
 				p.getMoney(), OptionalInt.empty(), p.getPositionIndex()));
+
+		MonopolyServer.getInstance().getGameBoard().pickupCard(this, p);
 	}
 }

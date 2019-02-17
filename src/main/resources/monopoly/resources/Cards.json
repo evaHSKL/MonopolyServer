@@ -17,7 +17,7 @@
 		"text": "Rücke vor bis auf Los. (Ziehe M 200 ein).",
 		"type": "event",
 		"action": {
-			"type": "move",
+			"type": "movetarget",
 			"target": "LOS"
 		}
 	},
@@ -25,7 +25,7 @@
 		"text": "Rücke vor bis zur Schlossallee.",
 		"type": "event",
 		"action": {
-			"type": "move",
+			"type": "movetarget",
 			"target": "Schlossallee"
 		}
 	},
@@ -33,7 +33,7 @@
 		"text": "Mache einen Ausflug zum Südbahnhof. Wenn du über Los kommst, ziehe M 200 ein.",
 		"type": "event",
 		"action": {
-			"type": "move",
+			"type": "movetarget",
 			"target": "Südbahnhof"
 		}
 	},
@@ -49,7 +49,7 @@
 		"text": "Rücke vor bis zum Opernplatz. Wenn du über Los kommst, ziehe M 200 ein.",
 		"type": "event",
 		"action": {
-			"type": "move",
+			"type": "movetarget",
 			"target": "Opernplatz"
 		}
 	},
@@ -57,8 +57,10 @@
 		"text": "Rücke vor bis zum nächsten Werk. Wirf die Würfel und zahlen dem Eigentümer den zehnfachen Betrag deines Wurfergebnisses. Wenn das Werk noch niemandem gehört, kannst du es von der Bank kaufen.",
 		"type": "event",
 		"action": {
-			"type": "move",
-			"target": "factory"
+			"type": "movetarget",
+			"target": "factory",
+			"modifier": 10,
+			"buyable": true
 		}
 	},
 	{
@@ -82,7 +84,7 @@
 		"text": "Rücke vor bis zur Seestrasse. Wenn du über Los kommst, ziehe M 200 ein.",
 		"type": "event",
 		"action": {
-			"type": "move",
+			"type": "movetarget",
 			"target": "Seestrasse"
 		}
 	},
@@ -91,7 +93,7 @@
 		"type": "event",
 		"action": {
 			"type": "moneyplayer",
-			"amount": -50 
+			"amount": -50
 		}
 	},
 	{
@@ -114,16 +116,20 @@
 		"text": "Rücke vor bis zum nächsten Bahnhof. Der Eigentümer erhält das Doppelte der normalen Miete. Wenn der Bahnhof noch niemandem gehört, kannst du ihn von der Bank kaufen.",
 		"type": "event",
 		"action": {
-			"type": "movemoneydouble",
-			"target": "trainstation"
+			"type": "movetarget",
+			"target": "trainstation",
+			"modifier": 2,
+			"buyable": true
 		}
 	},
 	{
 		"text": "Rücke vor bis zum nächsten Bahnhof. Der Eigentümer erhält das Doppelte der normalen Miete. Wenn der Bahnhof noch niemandem gehört, kannst du ihn von der Bank kaufen.",
 		"type": "event",
 		"action": {
-			"type": "movemoneydouble",
-			"target": "trainstation"
+			"type": "movetarget",
+			"target": "trainstation",
+			"modifier": 2,
+			"buyable": true
 		}
 	},
 	{
@@ -144,7 +150,7 @@
 		"text": "Rücke vor bis auf Los. (Ziehe M 200 ein).",
 		"type": "community",
 		"action": {
-			"type": "move",
+			"type": "movetarget",
 			"target": "LOS"
 		}
 	},

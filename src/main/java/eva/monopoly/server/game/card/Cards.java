@@ -15,12 +15,11 @@ import eva.monopoly.api.game.card.Card;
 import eva.monopoly.api.game.card.Card.CardType;
 import eva.monopoly.server.game.GameBoard;
 import eva.monopoly.server.game.card.cards.JailCard;
-import eva.monopoly.server.game.card.cards.MoneyCard;
 import eva.monopoly.server.game.card.cards.MoneyBuildingsCard;
+import eva.monopoly.server.game.card.cards.MoneyCard;
 import eva.monopoly.server.game.card.cards.MoneyPlayerCard;
-import eva.monopoly.server.game.card.cards.MoveTargetCard;
 import eva.monopoly.server.game.card.cards.MoveAmountCard;
-import eva.monopoly.server.game.card.cards.MovemoneydoubleCard;
+import eva.monopoly.server.game.card.cards.MoveTargetCard;
 import eva.monopoly.server.game.card.cards.UnjailCard;
 import eva.monopoly.server.util.ResourceReaderUtil;
 
@@ -72,6 +71,8 @@ public class Cards {
 		int amount;
 		int house;
 		int hotel;
+		int modifier;
+		boolean buyable;
 
 		Card card = null;
 
@@ -82,17 +83,16 @@ public class Cards {
 		case "unjail":
 			card = new UnjailCard(text, type);
 			break;
-		case "move":
+		case "movetarget":
 			target = objAction.get("target").getAsString();
-			card = new MoveTargetCard(text, type, target);
+			modifier = objAction.get("modifier").getAsInt();
+			buyable = objAction.get("buyable").getAsBoolean();
+			card = new MoveTargetCard(text, type, target, modifier, buyable);
 			break;
 		case "moveamount":
 			amount = objAction.get("amount").getAsInt();
-			card = new MoveAmountCard(text, type, amount);
-			break;
-		case "movemoneydouble":
-			target = objAction.get("target").getAsString();
-			card = new MovemoneydoubleCard(text, type, target);
+			modifier = objAction.get("modifier").getAsInt();
+			card = new MoveAmountCard(text, type, amount, modifier);
 			break;
 		case "money":
 			amount = objAction.get("amount").getAsInt();

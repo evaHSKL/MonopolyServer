@@ -17,10 +17,9 @@ public class MoveAmountCard extends eva.monopoly.api.game.card.cards.MoveAmountC
 	public void action(Player p) {
 		GameBoard.LOG.debug(this.getClass().getSimpleName() + " was pulled by Player " + p.getName());
 
-		MonopolyServer.getInstance().getGameBoard().moveAmount(p, amount, moneyModyfire);
-
 		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this, OptionalInt.empty(),
-				p.getMoney(), OptionalInt.of(amount), p.getPositionIndex()));
+				p.getMoney(), OptionalInt.empty(), p.getPositionIndex()));
 
+		MonopolyServer.getInstance().getGameBoard().moveAmount(p, amount, moneyModyfire);
 	}
 }

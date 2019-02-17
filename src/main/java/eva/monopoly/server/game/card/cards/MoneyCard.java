@@ -17,10 +17,10 @@ public class MoneyCard extends eva.monopoly.api.game.card.cards.MoneyCard {
 	public void action(Player p) {
 		GameBoard.LOG.debug(this.getClass().getSimpleName() + " was pulled by Player " + p.getName());
 
-		p.modifyMoney(amount);
-
 		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this,
-				OptionalInt.of(amount), p.getMoney(), OptionalInt.empty(), p.getPositionIndex()));
+				OptionalInt.of(amount), p.getMoney() + amount, OptionalInt.empty(), p.getPositionIndex()));
+
+		p.modifyMoney(amount);
 	}
 
 }

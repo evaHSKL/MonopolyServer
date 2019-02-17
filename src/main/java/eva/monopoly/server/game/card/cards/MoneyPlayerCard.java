@@ -19,16 +19,17 @@ public class MoneyPlayerCard extends eva.monopoly.api.game.card.cards.MoneyPlaye
 
 		for (Player pl : MonopolyServer.getInstance().getGameBoard().getPlayers()) {
 			if (pl != p) {
-				pl.modifyMoney(-amount);
 				MonopolyServer.getInstance().getServer().getSocketConnector(pl.getName())
-						.sendMessage(new CardPulled(p.getName(), this, OptionalInt.of(-amount), pl.getMoney(),
+						.sendMessage(new CardPulled(p.getName(), this, OptionalInt.of(-amount), pl.getMoney() - amount,
 								OptionalInt.empty(), pl.getPositionIndex()));
+				pl.modifyMoney(-amount);
 			}
 		}
 		int totalAmount = amount * (MonopolyServer.getInstance().getGameBoard().getPlayers().size() - 1);
-		p.modifyMoney(totalAmount);
 
 		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this,
-				OptionalInt.of(totalAmount), p.getMoney(), OptionalInt.empty(), p.getPositionIndex()));
+				OptionalInt.of(totalAmount), p.getMoney() + totalAmount, OptionalInt.empty(), p.getPositionIndex()));
+
+		p.modifyMoney(totalAmount);
 	}
 }

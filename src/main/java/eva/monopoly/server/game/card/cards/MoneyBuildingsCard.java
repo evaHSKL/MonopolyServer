@@ -28,11 +28,12 @@ public class MoneyBuildingsCard extends eva.monopoly.api.game.card.cards.MoneyBu
 				amountHotels += (s.getHouses() == 5 ? 1 : 0);
 			}
 		}
-		int amount = -(amountHouses * houseCosts + amountHotels * hotelCosts);
-		p.modifyMoney(amount);
+		int amount = amountHouses * houseCosts + amountHotels * hotelCosts;
 
 		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this,
-				OptionalInt.of(amount), p.getMoney(), OptionalInt.empty(), p.getPositionIndex()));
+				OptionalInt.of(amount), p.getMoney() + amount, OptionalInt.empty(), p.getPositionIndex()));
+
+		p.modifyMoney(amount);
 	}
 
 }

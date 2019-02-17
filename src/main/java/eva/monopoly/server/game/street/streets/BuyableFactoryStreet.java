@@ -2,9 +2,11 @@ package eva.monopoly.server.game.street.streets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalInt;
 
 import eva.monopoly.api.game.player.Player;
 import eva.monopoly.api.game.street.BuyableStreet;
+import eva.monopoly.api.network.messages.StreetEntered;
 import eva.monopoly.server.MonopolyServer;
 import eva.monopoly.server.game.GameBoard;
 
@@ -24,9 +26,11 @@ public class BuyableFactoryStreet extends eva.monopoly.api.game.street.streets.B
 	public void action(Player p, int dice, int modifier) {
 		Player streetOwner = MonopolyServer.getInstance().getGameBoard().getStreetOwner(this);
 		int fee = chargeFee(p, dice, streetOwner, modifier);
-		if (fee != 0) {
-			GameBoard.LOG.debug(p.getName() + " has entered " + getName() + " owned by " + streetOwner.getName()
-					+ " for a fee of " + fee);
-		}
+
+		GameBoard.LOG.debug(p.getName() + " has entered " + getName() + " owned by "
+				+ (streetOwner != null ? streetOwner.getName() + (fee != 0 ? " for a fee of " + fee : "") : "noone"));
+
+		MonopolyServer.getInstance().getServer().sendMessageToAll(new StreetEntered(p.getName(), this,
+				fee == 0 ? OptionalInt.empty() : OptionalInt.of(fee), p.getMoney()));
 	}
 }
