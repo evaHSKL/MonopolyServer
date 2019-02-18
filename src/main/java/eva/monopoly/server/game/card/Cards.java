@@ -2,7 +2,6 @@ package eva.monopoly.server.game.card;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map.Entry;
@@ -30,9 +29,16 @@ public class Cards {
 		ArrayList<Card> eventCards = new ArrayList<>();
 		ArrayList<Card> communityCards = new ArrayList<>();
 		try {
-			Path path = ResourceReaderUtil.getResourcePath("monopoly/resources/Cards.json");
-			JsonArray json = ResourceReaderUtil.getObjectAsJsonFromFile(path, JsonArray.class);
-			iterrateCards(json, eventCards, communityCards);
+			ResourceReaderUtil.getResourcePath("monopoly/resources/Cards.json", (path) -> {
+				JsonArray json;
+				try {
+					json = ResourceReaderUtil.getObjectAsJsonFromFile(path, JsonArray.class);
+					iterrateCards(json, eventCards, communityCards);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+
 		} catch (URISyntaxException | IOException | IllegalArgumentException e) {
 			e.printStackTrace();
 		}

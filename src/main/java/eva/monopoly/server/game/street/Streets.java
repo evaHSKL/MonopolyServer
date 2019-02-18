@@ -2,7 +2,6 @@ package eva.monopoly.server.game.street;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
 import com.google.gson.JsonArray;
@@ -26,9 +25,15 @@ public class Streets {
 		GameBoard.LOG.debug("Loading Streets from File...");
 		ArrayList<Street> streets = new ArrayList<>();
 		try {
-			Path path = ResourceReaderUtil.getResourcePath("monopoly/resources/Streets.json");
-			JsonObject json = ResourceReaderUtil.getObjectAsJsonFromFile(path, JsonObject.class);
-			iterrateStreets(json, streets);
+			ResourceReaderUtil.getResourcePath("monopoly/resources/Streets.json", (path) -> {
+				JsonObject json;
+				try {
+					json = ResourceReaderUtil.getObjectAsJsonFromFile(path, JsonObject.class);
+					iterrateStreets(json, streets);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
 		} catch (URISyntaxException | IOException | IllegalArgumentException e) {
 			e.printStackTrace();
 		}

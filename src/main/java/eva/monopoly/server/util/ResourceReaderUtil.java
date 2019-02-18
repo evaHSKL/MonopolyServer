@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.IOUtils;
 
@@ -27,15 +28,15 @@ public class ResourceReaderUtil {
 		return GSON.fromJson(jsonTxt, targetClass);
 	}
 
-	public static Path getResourcePath(String path) throws URISyntaxException, IOException {
+	public static void getResourcePath(String path, Consumer<Path> consumer) throws URISyntaxException, IOException {
 		URI jarURI = ResourceReaderUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI();
 		Path jarPath = Paths.get(jarURI);
 		if (Files.isRegularFile(jarPath)) {
 			try (final FileSystem fs = getZipFileSystem(jarURI)) {
-				return fs.getPath(path);
+				consumer.accept(fs.getPath(path));
 			}
 		} else {
-			return jarPath.resolve(path);
+			consumer.accept(jarPath.resolve(path));
 		}
 	}
 

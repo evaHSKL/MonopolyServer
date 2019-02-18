@@ -68,6 +68,8 @@
 				<directory></directory>
 				<excludes>
 					<exclude>pom.xml</exclude>
+					<exclude>bin</exclude>
+					<exclude>target</exclude>
 				</excludes>
 			</resource>
 		</resources>
@@ -98,11 +100,16 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.1.1</version>
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>eva.monopoly.server.MonopolyServer</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 				<executions>
 					<execution>
