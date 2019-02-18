@@ -299,7 +299,7 @@ public class MonopolyServer {
 
 					p.modifyMoney(-buyableStreet.getCost());
 					p.addStreet(buyableStreet);
-					server.sendMessageToAll(new StreetBuyed(clientName, buyableStreet));
+					server.sendMessageToAll(new StreetBuyed(clientName, buyableStreet, -buyableStreet.getCost()));
 				} else {
 					// TODO AUKTION
 				}
