@@ -144,9 +144,11 @@ public class GameBoard {
 		if (pos > streets.size() - 1) {
 			pos -= streets.size() - 1;
 			if (pos != 0) {
+				p.setPositionIndex(0);
 				streets.get(0).action(p, amount, 1);
 			}
 		}
+		p.setPositionIndex(pos);
 		streets.get(pos).action(p, amount, moneyModifier);
 	}
 

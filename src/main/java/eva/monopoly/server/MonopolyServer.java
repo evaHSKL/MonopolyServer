@@ -150,7 +150,7 @@ public class MonopolyServer {
 			}
 			players.get(clientName).setPlayerPawn(msg.getPawn());
 			server.sendMessageToAll(msg);
-		});
+		}, true);
 	}
 
 	private void registerGameStateChanged() {
@@ -160,32 +160,26 @@ public class MonopolyServer {
 			}
 			String clientName = msg.getName();
 
-			boolean ready = GameState.READY.equals(msg.getGameState());
-			boolean pregame = GameState.PREGAME.equals(msg.getGameState());
-			if (ready || pregame) {
-				if (ready) {
-					Client c = players.get(clientName);
-					for (Client cl : players.values()) {
-						if (c.getPlayerPawn() == null || c != cl && c.getPlayerPawn() != null
-								&& c.getPlayerPawn().equals(cl.getPlayerPawn())) {
-							con.sendMessage(new GameStateChanged(clientName, GameState.PREGAME));
-							return;
-						}
-					}
-				}
-				players.get(clientName).setReady(ready);
-				server.sendMessageToAll(msg);
-				if (ready) {
-					if (players.size() == 1) {
+			if (GameState.READY.equals(msg.getGameState())) {
+				Client c = players.get(clientName);
+				for (Client cl : players.values()) {
+					if (c.getPlayerPawn() == null
+							|| c != cl && c.getPlayerPawn() != null && c.getPlayerPawn().equals(cl.getPlayerPawn())) {
+						con.sendMessage(new GameStateChanged(clientName, GameState.PREGAME));
 						return;
 					}
-					for (Client c : players.values()) {
-						if (!c.isReady()) {
-							return;
-						}
-					}
-					startGame();
 				}
+				players.get(clientName).setReady(true);
+				server.sendMessageToAll(msg);
+				if (players.size() == 1) {
+					return;
+				}
+				for (Client cl : players.values()) {
+					if (!cl.isReady()) {
+						return;
+					}
+				}
+				startGame();
 			}
 		});
 	}
@@ -257,11 +251,12 @@ public class MonopolyServer {
 					return;
 				}
 				if (playerDoublets.get(clientName) == 3) {
+					server.sendMessageToAll(new RollDice(clientName, amount, doublets, true));
 					p.jail();
 				} else {
+					server.sendMessageToAll(new RollDice(clientName, amount, doublets, false));
 					gameBoard.moveAmount(p, amount, 1);
 				}
-				server.sendMessageToAll(new RollDice(msg.getName(), amount, doublets, p.isJailed()));
 			}
 		});
 	}
