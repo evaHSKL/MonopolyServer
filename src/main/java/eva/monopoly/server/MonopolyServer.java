@@ -62,7 +62,7 @@ public class MonopolyServer {
 				String clientName = server.getSocketConnectorName(con);
 				server.closeConnection(clientName);
 				if (disconnectedPlayers.containsKey(clientName)) {
-					LOG.error("The client " + clientName + " disconnected");
+					LOG.warn("The client " + clientName + " disconnected");
 				} else {
 					disconnectedPlayers.put(clientName, players.get(clientName));
 					players.remove(clientName);
