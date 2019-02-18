@@ -1,7 +1,5 @@
 package eva.monopoly.server.game.card.cards;
 
-import java.util.OptionalInt;
-
 import eva.monopoly.api.game.player.Player;
 import eva.monopoly.api.network.messages.CardPulled;
 import eva.monopoly.server.MonopolyServer;
@@ -20,16 +18,15 @@ public class MoneyPlayerCard extends eva.monopoly.api.game.card.cards.MoneyPlaye
 
 		for (Player pl : MonopolyServer.getInstance().getGameBoard().getPlayers()) {
 			if (pl != p) {
-				MonopolyServer.getInstance().getServer().getSocketConnector(pl.getName())
-						.sendMessage(new CardPulled(p.getName(), this, OptionalInt.of(-amount), pl.getMoney() - amount,
-								OptionalInt.empty(), pl.getPositionIndex()));
+				MonopolyServer.getInstance().getServer().getSocketConnector(pl.getName()).sendMessage(new CardPulled(
+						p.getName(), this, -amount, pl.getMoney() - amount, null, pl.getPositionIndex()));
 				pl.modifyMoney(-amount);
 			}
 		}
 		int totalAmount = amount * (MonopolyServer.getInstance().getGameBoard().getPlayers().size() - 1);
 
-		MonopolyServer.getInstance().getServer().sendMessageToAll(new CardPulled(p.getName(), this,
-				OptionalInt.of(totalAmount), p.getMoney() + totalAmount, OptionalInt.empty(), p.getPositionIndex()));
+		MonopolyServer.getInstance().getServer().sendMessageToAll(
+				new CardPulled(p.getName(), this, totalAmount, p.getMoney() + totalAmount, null, p.getPositionIndex()));
 
 		p.modifyMoney(totalAmount);
 	}

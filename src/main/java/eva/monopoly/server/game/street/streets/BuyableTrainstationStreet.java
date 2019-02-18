@@ -2,7 +2,6 @@ package eva.monopoly.server.game.street.streets;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalInt;
 
 import eva.monopoly.api.game.player.Player;
 import eva.monopoly.api.game.street.BuyableStreet;
@@ -30,7 +29,7 @@ public class BuyableTrainstationStreet extends eva.monopoly.api.game.street.stre
 		GameBoard.LOG.debug(p.getName() + " has entered " + getName() + " owned by "
 				+ (getOwner() != null ? getOwner().getName() + (fee != 0 ? " for a fee of " + fee : "") : "noone"));
 
-		MonopolyServer.getInstance().getServer().sendMessageToAll(new StreetEntered(p.getName(), this,
-				fee == 0 ? OptionalInt.empty() : OptionalInt.of(fee), p.getMoney()));
+		MonopolyServer.getInstance().getServer()
+				.sendMessageToAll(new StreetEntered(p.getName(), this, fee == 0 ? null : fee, p.getMoney()));
 	}
 }
