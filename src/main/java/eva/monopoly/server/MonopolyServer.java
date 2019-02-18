@@ -208,7 +208,8 @@ public class MonopolyServer {
 				return;
 			}
 			gameBoard.nextPlayer();
-			server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
+			Player p = gameBoard.getPlayerIsPlaying();
+			server.sendMessageToAll(new StartStopRound(p.getName(), p.getMoney(), p.getPositionIndex()));
 		});
 	}
 
@@ -299,7 +300,7 @@ public class MonopolyServer {
 
 					p.modifyMoney(-buyableStreet.getCost());
 					p.addStreet(buyableStreet);
-					server.sendMessageToAll(new StreetBuyed(clientName, buyableStreet, -buyableStreet.getCost()));
+					server.sendMessageToAll(new StreetBuyed(clientName, buyableStreet, p.getMoney()));
 				} else {
 					// TODO AUKTION
 				}
@@ -316,7 +317,8 @@ public class MonopolyServer {
 		server.sendMessageToAll(new GetPlayers(gameBoard.getPlayers()));
 
 		gameBoard.shufflePlayers();
-		server.sendMessageToAll(new StartStopRound(gameBoard.getPlayerIsPlaying().getName()));
+		Player p = gameBoard.getPlayerIsPlaying();
+		server.sendMessageToAll(new StartStopRound(p.getName(), p.getMoney(), p.getPositionIndex()));
 	}
 
 	private boolean checkClient(SocketConnector con, ExchangeMessage msg) {
