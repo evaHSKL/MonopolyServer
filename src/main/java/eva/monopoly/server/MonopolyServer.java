@@ -17,9 +17,11 @@ import eva.monopoly.api.network.api.SocketConnector;
 import eva.monopoly.api.network.messages.BuyStreet;
 import eva.monopoly.api.network.messages.GameStateChanged;
 import eva.monopoly.api.network.messages.GameStateChanged.GameState;
+import eva.monopoly.api.network.messages.GetCards;
 import eva.monopoly.api.network.messages.GetConnectedClients;
 import eva.monopoly.api.network.messages.GetConnectedClients.Client;
 import eva.monopoly.api.network.messages.GetPlayers;
+import eva.monopoly.api.network.messages.GetStreets;
 import eva.monopoly.api.network.messages.PawnChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged;
 import eva.monopoly.api.network.messages.PlayerStatusChanged.ConnectionState;
@@ -96,6 +98,8 @@ public class MonopolyServer {
 		registerRollDice();
 		registerUnjail();
 		registerBuyStreet();
+		registerGetCards();
+		registerGetStreets();
 	}
 
 	private void registerPlayerStatusChanged() {
@@ -198,7 +202,9 @@ public class MonopolyServer {
 			if (!checkClient(con, msg)) {
 				return;
 			}
-			con.sendMessage(new GetPlayers(gameBoard.getPlayers()));
+			String clientName = msg.getName();
+
+			con.sendMessage(new GetPlayers(clientName, gameBoard.getPlayers()));
 		});
 	}
 
@@ -209,7 +215,7 @@ public class MonopolyServer {
 			}
 			gameBoard.nextPlayer();
 			Player p = gameBoard.getPlayerIsPlaying();
-			server.sendMessageToAll(new StartStopRound(p.getName(), p.getMoney(), p.getPositionIndex()));
+			server.sendMessageToAll(new StartStopRound(p.getName(), p));
 		});
 	}
 
@@ -308,17 +314,40 @@ public class MonopolyServer {
 		});
 	}
 
+	private void registerGetCards() {
+		server.registerClientHandle(GetCards.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
+			Player p = gameBoard.getPlayer(clientName);
+
+			con.sendMessage(new GetCards(clientName, p.getCards()));
+		});
+	}
+
+	private void registerGetStreets() {
+		server.registerClientHandle(GetStreets.class, (con, msg) -> {
+			if (!checkClient(con, msg)) {
+				return;
+			}
+			String clientName = msg.getName();
+			Player p = gameBoard.getPlayer(clientName);
+
+			con.sendMessage(new GetStreets(clientName, p.getStreets()));
+		});
+	}
+
 	private void startGame() {
 		for (Entry<String, Client> c : players.entrySet()) {
 			gameBoard.addPlayer(new Player(c.getKey(), c.getValue().getPlayerPawn()));
 		}
 		server.sendMessageToAll(new GameStateChanged(GameState.INGAME));
 		gameState = GameState.INGAME;
-		server.sendMessageToAll(new GetPlayers(gameBoard.getPlayers()));
 
 		gameBoard.shufflePlayers();
 		Player p = gameBoard.getPlayerIsPlaying();
-		server.sendMessageToAll(new StartStopRound(p.getName(), p.getMoney(), p.getPositionIndex()));
+		server.sendMessageToAll(new StartStopRound(p.getName(), p));
 	}
 
 	private boolean checkClient(SocketConnector con, ExchangeMessage msg) {
